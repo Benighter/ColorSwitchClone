@@ -71,7 +71,7 @@ color-switcher/
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Benighter/color-switcher.git
+   git clone https://github.com/Benighter/ColorSwitchClone.git
    ```
 2. Open `index.html` in your web browser
 3. Start playing!
