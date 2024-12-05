@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Switch Game - Enhanced</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="gameUI">
+        <div>Score: <span id="score">0</span></div>
+        <div>High Score: <span id="highScore">0</span></div>
+    </div>
+    <div id="gameOverScreen">
+        <h2>Game Over</h2>
+        <p>Your Score: <span id="finalScore"></span></p>
+        <p>High Score: <span id="finalHighScore"></span></p>
+        <button id="restartButton">Restart</button>
+    </div>
+
+    <script src="ui.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
