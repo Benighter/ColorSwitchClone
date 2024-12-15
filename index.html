@@ -3,23 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Switch Game - Enhanced</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Color Switcher Game</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <div id="gameUI">
-        <div>Score: <span id="score">0</span></div>
-        <div>High Score: <span id="highScore">0</span></div>
+    <div class="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div class="ui-overlay">
+            <div class="score">Score: <span id="score">0</span></div>
+            <div class="high-score">High Score: <span id="highScore">0</span></div>
+        </div>
+        <div id="gameOverScreen" class="game-over">
+            <h2>Game Over</h2>
+            <p>Score: <span id="finalScore">0</span></p>
+            <p>High Score: <span id="finalHighScore">0</span></p>
+            <button id="restartButton">Restart Game</button>
+        </div>
     </div>
-    <div id="gameOverScreen">
-        <h2>Game Over</h2>
-        <p>Your Score: <span id="finalScore"></span></p>
-        <p>High Score: <span id="finalHighScore"></span></p>
-        <button id="restartButton">Restart</button>
-    </div>
+    <script type="module" src="js/game.js"></script>
 
-    <script src="ui.js"></script>
-    <script src="game.js"></script>
 </body>
 </html>
