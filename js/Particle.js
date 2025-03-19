@@ -12,8 +12,10 @@ class Particle {
         this.canvas = canvas;
         this.ctx = ctx;
         this.lifetime = lifetime;
+        this.maxLifetime = lifetime;
         this.age = 0;
         this.opacity = 1;
+        this.customDraw = null; // Custom draw function
     }
 
     update() {
@@ -31,7 +33,12 @@ class Particle {
         
         // Draw if still alive
         if (this.age < this.lifetime) {
-            this.draw();
+            // Use custom draw function if provided, otherwise use default
+            if (this.customDraw && typeof this.customDraw === 'function') {
+                this.customDraw(this.ctx);
+            } else {
+                this.draw();
+            }
             return true;
         }
         return false;

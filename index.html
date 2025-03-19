@@ -21,11 +21,16 @@
             </div>
             <div class="menu-buttons">
                 <button id="playButton" class="menu-button">Play</button>
+                <div class="level-selection" id="levelSelection">
+                    <!-- Level options will be populated by JavaScript -->
+                </div>
                 <div class="menu-settings">
-                    <div class="setting-item">
+                    <div class="setting-item" id="creativeModeSetting">
                         <label for="creativeMode">Creative Mode</label>
-                        <input type="checkbox" id="creativeMode">
-                        <span class="toggle-switch"></span>
+                        <div class="toggle-container">
+                            <input type="checkbox" id="creativeMode">
+                            <span class="toggle-switch"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -38,6 +43,7 @@
         <div class="ui-overlay">
             <div class="score">Score: <span id="score">0</span></div>
             <div class="high-score">High Score: <span id="highScore">0</span></div>
+            <!-- Level indicator and powerup indicator will be added by JavaScript -->
         </div>
         
         <!-- Game Over Screen -->
@@ -49,6 +55,13 @@
                 <button id="restartButton" class="menu-button">Play Again</button>
                 <button id="mainMenuButton" class="menu-button secondary">Main Menu</button>
             </div>
+        </div>
+        
+        <!-- Powerup Tooltip Template -->
+        <div id="powerupTooltip" class="powerup-tooltip" style="display: none;">
+            <div class="tooltip-title"></div>
+            <div class="tooltip-description"></div>
+            <div class="tooltip-duration"></div>
         </div>
     </div>
     <script type="module" src="js/game.js"></script>

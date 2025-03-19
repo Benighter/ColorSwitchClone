@@ -449,12 +449,27 @@ body.creative-mode {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.setting-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .setting-item label {
     color: white;
     font-size: 16px;
+    cursor: pointer;
+}
+
+/* Toggle container */
+.toggle-container {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 /* Custom toggle switch */
@@ -470,6 +485,7 @@ body.creative-mode {
     display: inline-block;
     width: 50px;
     height: 24px;
+    cursor: pointer;
 }
 
 .toggle-switch:before {
@@ -554,4 +570,197 @@ input:checked + .toggle-switch:after {
         width: 100px;
         height: 100px;
     }
+}
+
+/* Level indicator styles */
+.level-indicator {
+    position: absolute;
+    top: 80px;
+    left: 20px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: calc(0.7vw + 0.7vh + 0.2vmin);
+    backdrop-filter: blur(3px);
+    transition: all 0.3s ease;
+    opacity: 0.8;
+    transform: translateX(0);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 5;
+}
+
+.level-indicator:hover {
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+.level-changed {
+    animation: levelChange 1s ease;
+}
+
+@keyframes levelChange {
+    0% { transform: scale(1); background-color: rgba(0, 0, 0, 0.5); }
+    50% { transform: scale(1.2); background-color: rgba(156, 89, 255, 0.7); }
+    100% { transform: scale(1); background-color: rgba(0, 0, 0, 0.5); }
+}
+
+/* Powerup indicator styles */
+.powerup-indicator {
+    position: absolute;
+    top: 120px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 5;
+}
+
+.powerup-item {
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: calc(0.7vw + 0.7vh + 0.2vmin);
+    backdrop-filter: blur(3px);
+    transition: all 0.3s ease;
+    opacity: 0.8;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    animation: powerupPulse 2s infinite ease-in-out;
+}
+
+.powerup-item:hover {
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+.powerup-item.shield {
+    background-color: rgba(52, 152, 219, 0.5);
+    border: 1px solid rgba(52, 152, 219, 0.8);
+}
+
+.powerup-item.slowmo {
+    background-color: rgba(155, 89, 182, 0.5);
+    border: 1px solid rgba(155, 89, 182, 0.8);
+}
+
+.powerup-item.magnet {
+    background-color: rgba(231, 76, 60, 0.5);
+    border: 1px solid rgba(231, 76, 60, 0.8);
+}
+
+.powerup-item.multicolor {
+    background-color: rgba(241, 196, 15, 0.5);
+    border: 1px solid rgba(241, 196, 15, 0.8);
+}
+
+.powerup-item.shrink {
+    background-color: rgba(26, 188, 156, 0.5);
+    border: 1px solid rgba(26, 188, 156, 0.8);
+}
+
+@keyframes powerupPulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+/* Powerup tooltip styles */
+.powerup-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 14px;
+    max-width: 200px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.powerup-tooltip.visible {
+    opacity: 1;
+}
+
+.tooltip-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #9c59ff;
+}
+
+.tooltip-description {
+    margin-bottom: 5px;
+    opacity: 0.9;
+    line-height: 1.3;
+}
+
+.tooltip-duration {
+    font-style: italic;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* Add a level selection UI in the main menu */
+.level-selection {
+    width: 100%;
+    margin: 10px 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 15px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.level-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    margin-bottom: 5px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.level-option:hover {
+    background: rgba(156, 89, 255, 0.3);
+    transform: translateX(5px);
+}
+
+.level-option.locked {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.level-option.locked:hover {
+    background: rgba(0, 0, 0, 0.3);
+    transform: none;
+}
+
+.level-option .level-name {
+    font-size: 14px;
+    color: white;
+}
+
+.level-option .level-score {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.level-option .locked-icon {
+    margin-left: 5px;
+    font-size: 14px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 0.8; transform: translateY(0); }
 }

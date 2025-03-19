@@ -124,6 +124,246 @@ class Effects {
         this.createColorfulExplosion(x, y, colors, 40);
         this.triggerScreenShake(5, 5);
     }
+    
+    createPowerupCollectedEffect(x, y, color) {
+        // Create main explosion with powerup color
+        this.createExplosion(x, y, color, 30, 1.2);
+        
+        // Create pulsating ring effect
+        this.createPowerupRingEffect(x, y, color);
+        
+        // Add slight screen shake
+        this.triggerScreenShake(3, 8);
+    }
+    
+    createPowerupRingEffect(x, y, color) {
+        // Create expanding ring particles
+        const ringCount = 20;
+        const angleStep = (Math.PI * 2) / ringCount;
+        
+        for (let i = 0; i < ringCount; i++) {
+            const angle = i * angleStep;
+            const speed = 3;
+            const velocityX = Math.cos(angle) * speed;
+            const velocityY = Math.sin(angle) * speed;
+            
+            // Create a ring particle with fading effect
+            const particle = new Particle(
+                this.canvas,
+                this.ctx,
+                x,
+                y,
+                color,
+                velocityX,
+                velocityY,
+                2,
+                40
+            );
+            
+            // Custom draw method for ring particles
+            particle.customDraw = function(ctx) {
+                const alpha = this.lifetime / this.maxLifetime;
+                ctx.globalAlpha = alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * (2 - alpha), 0, Math.PI * 2);
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            };
+            
+            this.particles.push(particle);
+        }
+    }
+    
+    createShieldActivationEffect(x, y) {
+        // Shield activation effect with bubble particles
+        const shieldColor = '#3498db';
+        
+        // Create shield bubble effect
+        for (let i = 0; i < 30; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * 30 + 20;
+            const startX = x + Math.cos(angle) * distance;
+            const startY = y + Math.sin(angle) * distance;
+            
+            // Particles move toward the ball position
+            const velocityX = (x - startX) * 0.05;
+            const velocityY = (y - startY) * 0.05;
+            
+            const particle = new Particle(
+                this.canvas,
+                this.ctx,
+                startX,
+                startY,
+                shieldColor,
+                velocityX,
+                velocityY,
+                Math.random() * 3 + 1,
+                30
+            );
+            
+            this.particles.push(particle);
+        }
+    }
+    
+    createSlowmoActivationEffect(x, y) {
+        // Slow motion effect with clock particles
+        const slowmoColor = '#9b59b6';
+        
+        // Create time ripple effect
+        for (let i = 0; i < 3; i++) {
+            const rippleParticles = 20;
+            const angleStep = (Math.PI * 2) / rippleParticles;
+            const delayStep = 5;
+            
+            for (let j = 0; j < rippleParticles; j++) {
+                const angle = j * angleStep;
+                const delay = i * delayStep;
+                
+                setTimeout(() => {
+                    const rippleDistance = 30 + i * 15;
+                    const rippleX = x + Math.cos(angle) * rippleDistance;
+                    const rippleY = y + Math.sin(angle) * rippleDistance;
+                    
+                    const particle = new Particle(
+                        this.canvas,
+                        this.ctx,
+                        rippleX,
+                        rippleY,
+                        slowmoColor,
+                        0,
+                        0,
+                        2,
+                        30
+                    );
+                    
+                    // Custom draw for time ripple
+                    particle.customDraw = function(ctx) {
+                        const alpha = this.lifetime / this.maxLifetime;
+                        ctx.globalAlpha = alpha * 0.7;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                        ctx.fillStyle = this.color;
+                        ctx.fill();
+                        ctx.globalAlpha = 1;
+                    };
+                    
+                    this.particles.push(particle);
+                }, delay);
+            }
+        }
+    }
+    
+    createMagnetActivationEffect(x, y) {
+        // Magnet activation with particle attraction
+        const magnetColor = '#e74c3c';
+        
+        // Create magnetic field lines
+        for (let i = 0; i < 8; i++) {
+            const angle = (i / 8) * Math.PI * 2;
+            const lineLength = 100;
+            const segments = 10;
+            
+            for (let j = 0; j < segments; j++) {
+                const distance = (j / segments) * lineLength;
+                const pulseOffset = Math.sin((j / segments) * Math.PI) * 10;
+                
+                const particleX = x + Math.cos(angle) * (distance + pulseOffset);
+                const particleY = y + Math.sin(angle) * (distance + pulseOffset);
+                
+                // Particles move toward the ball position
+                const velocityX = (x - particleX) * 0.08;
+                const velocityY = (y - particleY) * 0.08;
+                
+                const particle = new Particle(
+                    this.canvas,
+                    this.ctx,
+                    particleX,
+                    particleY,
+                    magnetColor,
+                    velocityX,
+                    velocityY,
+                    2,
+                    20 + j * 2
+                );
+                
+                this.particles.push(particle);
+            }
+        }
+    }
+    
+    createMulticolorActivationEffect(x, y, colors) {
+        // Rainbow wave effect
+        const waveCount = 3;
+        const particlesPerWave = 40;
+        const angleStep = (Math.PI * 2) / particlesPerWave;
+        
+        for (let wave = 0; wave < waveCount; wave++) {
+            const waveDelay = wave * 10;
+            const waveDistance = 20 + wave * 15;
+            
+            setTimeout(() => {
+                for (let i = 0; i < particlesPerWave; i++) {
+                    const angle = i * angleStep;
+                    const colorIndex = i % colors.length;
+                    
+                    const particleX = x + Math.cos(angle) * waveDistance;
+                    const particleY = y + Math.sin(angle) * waveDistance;
+                    
+                    // Rainbow particles move outward
+                    const velocityX = Math.cos(angle) * 2;
+                    const velocityY = Math.sin(angle) * 2;
+                    
+                    const particle = new Particle(
+                        this.canvas,
+                        this.ctx,
+                        particleX,
+                        particleY,
+                        colors[colorIndex],
+                        velocityX,
+                        velocityY,
+                        3,
+                        40
+                    );
+                    
+                    this.particles.push(particle);
+                }
+            }, waveDelay);
+        }
+    }
+    
+    createShrinkActivationEffect(x, y) {
+        // Shrink effect with particles moving inward
+        const shrinkColor = '#1abc9c';
+        
+        // Create imploding particles
+        for (let i = 0; i < 40; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const distance = Math.random() * 40 + 20;
+            
+            const particleX = x + Math.cos(angle) * distance;
+            const particleY = y + Math.sin(angle) * distance;
+            
+            // Particles move toward the ball position
+            const velocityX = (x - particleX) * 0.1;
+            const velocityY = (y - particleY) * 0.1;
+            
+            const particle = new Particle(
+                this.canvas,
+                this.ctx,
+                particleX,
+                particleY,
+                shrinkColor,
+                velocityX,
+                velocityY,
+                Math.random() * 4 + 1,
+                30
+            );
+            
+            this.particles.push(particle);
+        }
+    }
 
     updateCanvasDimensions(canvas) {
         // Update canvas reference

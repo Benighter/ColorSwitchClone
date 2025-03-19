@@ -15,6 +15,16 @@ class Obstacle {
         this.pulseSpeed = 0.02;
         this.pulseTime = Math.random() * Math.PI * 2;
         this.glowSize = 5;
+        
+        // Level-specific properties
+        this.drawInnerRing = false;
+        this.innerRadius = 60;
+        this.innerThickness = 15;
+        this.pulsateSize = false;
+        this.pulsateSpeed = 0.02;
+        this.pulsateAmount = 0.15; // 15% size variation
+        this.chaotic = false;
+        
         // Create random motion patterns for each segment
         for (let i = 0; i < this.colors.length; i++) {
             this.segments.push({
@@ -34,30 +44,55 @@ class Obstacle {
         // Update pulse effect
         this.pulseTime += this.pulseSpeed;
         const pulseValue = (Math.sin(this.pulseTime) + 1) * 0.5; // 0 to 1
+        
+        // Size pulsation if enabled
+        let currentRadius = this.radius;
+        if (this.pulsateSize) {
+            currentRadius = this.radius * (1 - this.pulsateAmount + pulseValue * (this.pulsateAmount * 2));
+        }
+        
         const glowSize = this.glowSize + pulseValue * 2;
         
+        // Draw main ring
+        this.drawRing(currentRadius, this.thickness, glowSize, pulseValue);
+        
+        // Draw inner ring if enabled
+        if (this.drawInnerRing) {
+            this.drawRing(this.innerRadius, this.innerThickness, glowSize * 0.7, pulseValue);
+        }
+        
+        this.ctx.restore();
+    }
+    
+    drawRing(radius, thickness, glowSize, pulseValue) {
         for (let i = 0; i < this.colors.length; i++) {
             // Apply segment-specific motion
             const segment = this.segments[i];
-            const segmentRotation = segment.angleOffset + 
-                Math.sin(this.rotation * segment.frequency + segment.phase) * segment.amplitude;
+            let segmentRotation = segment.angleOffset;
+            
+            if (this.chaotic) {
+                // Enhance chaotic movement
+                segmentRotation += Math.sin(this.rotation * segment.frequency * 2 + segment.phase) * segment.amplitude * 2;
+            } else {
+                segmentRotation += Math.sin(this.rotation * segment.frequency + segment.phase) * segment.amplitude;
+            }
                 
             this.ctx.save();
             this.ctx.rotate(segmentRotation);
             
             // Draw glow effect
             this.ctx.beginPath();
-            this.ctx.arc(0, 0, this.radius, (i * Math.PI / 2), ((i + 1) * Math.PI / 2));
-            this.ctx.lineWidth = this.thickness + glowSize * 2;
+            this.ctx.arc(0, 0, radius, (i * Math.PI / 2), ((i + 1) * Math.PI / 2));
+            this.ctx.lineWidth = thickness + glowSize * 2;
             this.ctx.strokeStyle = `${this.colors[i]}${Math.floor(this.glowIntensity * pulseValue * 80).toString(16).padStart(2, '0')}`;
             this.ctx.stroke();
             
             // Draw main arc with gradient
             const gradient = this.ctx.createLinearGradient(
-                Math.cos(i * Math.PI / 2) * this.radius, 
-                Math.sin(i * Math.PI / 2) * this.radius,
-                Math.cos((i + 1) * Math.PI / 2) * this.radius, 
-                Math.sin((i + 1) * Math.PI / 2) * this.radius
+                Math.cos(i * Math.PI / 2) * radius, 
+                Math.sin(i * Math.PI / 2) * radius,
+                Math.cos((i + 1) * Math.PI / 2) * radius, 
+                Math.sin((i + 1) * Math.PI / 2) * radius
             );
             
             // Create subtle gradient effect along the arc
@@ -66,23 +101,21 @@ class Obstacle {
             gradient.addColorStop(1, this.colors[i]);
             
             this.ctx.beginPath();
-            this.ctx.arc(0, 0, this.radius, (i * Math.PI / 2), ((i + 1) * Math.PI / 2));
-            this.ctx.lineWidth = this.thickness;
+            this.ctx.arc(0, 0, radius, (i * Math.PI / 2), ((i + 1) * Math.PI / 2));
+            this.ctx.lineWidth = thickness;
             this.ctx.strokeStyle = gradient;
             this.ctx.lineCap = 'round';
             this.ctx.stroke();
             
             // Add highlight effect
             this.ctx.beginPath();
-            this.ctx.arc(0, 0, this.radius, (i * Math.PI / 2), ((i + 1) * Math.PI / 2));
-            this.ctx.lineWidth = this.thickness * 0.4;
+            this.ctx.arc(0, 0, radius, (i * Math.PI / 2), ((i + 1) * Math.PI / 2));
+            this.ctx.lineWidth = thickness * 0.4;
             this.ctx.strokeStyle = `rgba(255, 255, 255, ${0.2 + pulseValue * 0.3})`;
             this.ctx.stroke();
             
             this.ctx.restore();
         }
-
-        this.ctx.restore();
     }
 
     // Helper function to lighten a color
@@ -96,7 +129,14 @@ class Obstacle {
     }
 
     update() {
-        this.rotation += this.speed;
+        // Apply chaotic movement if enabled
+        if (this.chaotic) {
+            // Add subtle random speed variations
+            this.rotation += this.speed * (0.9 + Math.random() * 0.2);
+        } else {
+            this.rotation += this.speed;
+        }
+        
         this.draw();
     }
 
@@ -105,6 +145,12 @@ class Obstacle {
         let dy = ball.y - this.y;
         let distance = Math.sqrt(dx * dx + dy * dy);
 
+        // If ball has multicolor mode, it can pass through any color
+        if (ball.multicolorMode) {
+            return { collided: false, sameColor: true };
+        }
+
+        // Check collision with main ring
         let innerRadius = this.radius - this.thickness / 2;
         let outerRadius = this.radius + this.thickness / 2;
 
@@ -113,11 +159,28 @@ class Obstacle {
             let normalizedAngle = ((angle + Math.PI * 2) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
             let colorIndex = Math.floor(normalizedAngle / (Math.PI / 2)) % this.colors.length;
 
-            if (distance >= innerRadius - ball.radius && distance <= outerRadius + ball.radius) {
-                return {
-                    collided: true,
-                    sameColor: this.colors[colorIndex] === ball.color
-                };
+            if (this.colors[colorIndex] === ball.color) {
+                return { collided: true, sameColor: true };
+            } else {
+                return { collided: true, sameColor: false };
+            }
+        }
+        
+        // Check collision with inner ring if present
+        if (this.drawInnerRing) {
+            let innerRingInner = this.innerRadius - this.innerThickness / 2;
+            let innerRingOuter = this.innerRadius + this.innerThickness / 2;
+            
+            if (distance > innerRingInner - ball.radius && distance < innerRingOuter + ball.radius) {
+                let angle = Math.atan2(dy, dx) - this.rotation;
+                let normalizedAngle = ((angle + Math.PI * 2) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+                let colorIndex = Math.floor(normalizedAngle / (Math.PI / 2)) % this.colors.length;
+
+                if (this.colors[colorIndex] === ball.color) {
+                    return { collided: true, sameColor: true };
+                } else {
+                    return { collided: true, sameColor: false };
+                }
             }
         }
 
@@ -139,6 +202,14 @@ class Obstacle {
         const scaleFactor = Math.min(canvas.width, canvas.height) / 600;
         this.radius = 100 * scaleFactor;
         this.thickness = 20 * scaleFactor;
+        
+        // Scale inner ring if present
+        if (this.drawInnerRing) {
+            this.innerRadius = 60 * scaleFactor;
+            this.innerThickness = 15 * scaleFactor;
+        }
+        
+        this.glowSize = 5 * scaleFactor;
     }
 }
 
