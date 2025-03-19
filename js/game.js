@@ -152,7 +152,12 @@ function updateLevelDisplay() {
     const currentLevel = levelManager.getCurrentLevel();
     
     if (currentLevel) {
-        levelIndicator.innerHTML = `<div class="level-name">Level ${currentLevel.id}: ${currentLevel.name}</div>`;
+        levelIndicator.innerHTML = `
+            <div class="level-name">
+                <span class="level-icon">🌟</span>
+                Level ${currentLevel.id}: ${currentLevel.name}
+            </div>
+        `;
         
         // Add animation when level changes
         levelIndicator.classList.add('level-changed');
