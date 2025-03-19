@@ -255,14 +255,14 @@ function createUI() {
     
     const modeToggleLabel = document.createElement('label');
     modeToggleLabel.htmlFor = 'creativeMode';
-    modeToggleLabel.textContent = 'Creative Mode';
+    modeToggleLabel.textContent = 'Creative';
     
     modeToggleContainer.appendChild(modeToggleCheckbox);
     modeToggleContainer.appendChild(modeToggleLabel);
     uiControls.appendChild(modeToggleContainer);
     
-    // Add the controls to the UI overlay
-    document.querySelector('.ui-overlay').appendChild(uiControls);
+    // Add the controls to the game container
+    document.querySelector('.game-container').appendChild(uiControls);
 }
 
 // Event listeners
