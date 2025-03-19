@@ -9,18 +9,48 @@
 <body>
     <div class="game-container">
         <canvas id="gameCanvas"></canvas>
+        
+        <!-- Main Menu -->
+        <div id="mainMenu" class="main-menu">
+            <div class="game-logo">
+                <div class="logo-circle red"></div>
+                <div class="logo-circle yellow"></div>
+                <div class="logo-circle green"></div>
+                <div class="logo-circle blue"></div>
+                <h1>Color Switch</h1>
+            </div>
+            <div class="menu-buttons">
+                <button id="playButton" class="menu-button">Play</button>
+                <div class="menu-settings">
+                    <div class="setting-item">
+                        <label for="creativeMode">Creative Mode</label>
+                        <input type="checkbox" id="creativeMode">
+                        <span class="toggle-switch"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-footer">
+                <p>High Score: <span id="menuHighScore">0</span></p>
+            </div>
+        </div>
+        
+        <!-- Game UI -->
         <div class="ui-overlay">
             <div class="score">Score: <span id="score">0</span></div>
             <div class="high-score">High Score: <span id="highScore">0</span></div>
         </div>
+        
+        <!-- Game Over Screen -->
         <div id="gameOverScreen" class="game-over">
             <h2>Game Over</h2>
             <p>Score: <span id="finalScore">0</span></p>
             <p>High Score: <span id="finalHighScore">0</span></p>
-            <button id="restartButton">Restart Game</button>
+            <div class="game-over-buttons">
+                <button id="restartButton" class="menu-button">Play Again</button>
+                <button id="mainMenuButton" class="menu-button secondary">Main Menu</button>
+            </div>
         </div>
     </div>
     <script type="module" src="js/game.js"></script>
-
 </body>
 </html>

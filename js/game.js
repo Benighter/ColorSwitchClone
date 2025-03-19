@@ -5,6 +5,13 @@ import Star from './Star.js';
 import Background from './Background.js';
 import Effects from './Effects.js';
 
+// Game states
+const GAME_STATE = {
+    MENU: 'menu',
+    PLAYING: 'playing',
+    GAME_OVER: 'game_over'
+};
+
 // Game constants and variables
 const colors = ['#FF4136', '#FF851B', '#FFDC00', '#2ECC40'];
 let currentColorIndex = 0;
@@ -14,16 +21,22 @@ let cameraY = 0;
 let maxCameraY = 0; 
 let gameSpeed = 2;
 let isCreativeMode = false;
+let currentGameState = GAME_STATE.MENU;
 
 // Get DOM elements
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreElement = document.getElementById('score');
 const highScoreElement = document.getElementById('highScore');
+const menuHighScoreElement = document.getElementById('menuHighScore');
 const gameOverScreen = document.getElementById('gameOverScreen');
+const mainMenu = document.getElementById('mainMenu');
 const finalScoreElement = document.getElementById('finalScore');
 const finalHighScoreElement = document.getElementById('finalHighScore');
 const restartButton = document.getElementById('restartButton');
+const playButton = document.getElementById('playButton');
+const mainMenuButton = document.getElementById('mainMenuButton');
+const creativeToggle = document.getElementById('creativeMode');
 
 // Set canvas dimensions
 canvas.width = 400;
@@ -59,21 +72,51 @@ setTimeout(resizeCanvas, 100);
 
 // Display high score on page load
 highScoreElement.textContent = highScore;
-
-// Create UI elements for creative mode
-createUI();
+menuHighScoreElement.textContent = highScore;
 
 // Game objects
-let ball = new Ball(canvas, ctx, colors, currentColorIndex);
-let obstacles = [new Obstacle(canvas, ctx, colors, canvas.height / 2)];
-let colorSwitchers = [new ColorSwitcher(canvas, ctx, colors, canvas.height / 2 - 200)];
-let stars = [new Star(canvas, ctx, canvas.height / 2)];
-let background = new Background(canvas, ctx);
-let effects = new Effects(canvas, ctx);
-let gameActive = true;
+let ball = null;
+let obstacles = [];
+let colorSwitchers = [];
+let stars = [];
+let background = null;
+let effects = null;
+let gameActive = false;
+
+// Initialize game objects
+function initializeGame() {
+    // Reset game variables
+    score = 0;
+    cameraY = 0;
+    maxCameraY = 0;
+    gameSpeed = 2;
+    scoreElement.textContent = score;
+    
+    // Create game objects
+    ball = new Ball(canvas, ctx, colors, currentColorIndex);
+    obstacles = [new Obstacle(canvas, ctx, colors, canvas.height / 2)];
+    colorSwitchers = [new ColorSwitcher(canvas, ctx, colors, canvas.height / 2 - 200)];
+    stars = [new Star(canvas, ctx, canvas.height / 2 - 100)];
+    background = new Background(canvas, ctx);
+    effects = new Effects(canvas, ctx);
+    
+    // Apply creative mode if enabled
+    if (isCreativeMode) {
+        ball.toggleCreativeMode(true);
+        document.body.classList.add('creative-mode');
+        document.querySelector('.game-container').classList.add('creative-mode');
+    }
+    
+    // Add a second set of objects with proper spacing
+    obstacles.push(new Obstacle(canvas, ctx, colors, canvas.height / 2 - 500));
+    colorSwitchers.push(new ColorSwitcher(canvas, ctx, colors, canvas.height / 2 - 700));
+    stars.push(new Star(canvas, ctx, canvas.height / 2 - 400));
+    
+    gameActive = true;
+}
 
 function gameLoop() {
-    if (!gameActive) return;
+    if (!gameActive || currentGameState !== GAME_STATE.PLAYING) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -116,7 +159,7 @@ function gameLoop() {
                 effects.createExplosion(ball.x, ball.y, ball.color, 40, 2);
                 effects.triggerScreenShake(15, 15);
                 gameActive = false;
-                gameOver();
+                changeGameState(GAME_STATE.GAME_OVER);
                 return;
             }
         }
@@ -164,7 +207,7 @@ function gameLoop() {
         if (newY > ball.y - canvas.height) {
             obstacles.push(new Obstacle(canvas, ctx, colors, newY));
             colorSwitchers.push(new ColorSwitcher(canvas, ctx, colors, newY - 200));
-            stars.push(new Star(canvas, ctx, newY));
+            stars.push(new Star(canvas, ctx, newY - 100));
         }
     }
 
@@ -181,104 +224,131 @@ function gameLoop() {
     // Increase game speed based on score
     gameSpeed = 2 + Math.floor(score / 10) * 0.5;
 
-    if (gameActive) {
+    if (gameActive && currentGameState === GAME_STATE.PLAYING) {
         requestAnimationFrame(gameLoop);
     }
 }
 
-function gameOver() {
-    gameActive = false;
-    if (score > highScore && !isCreativeMode) {
-        highScore = score;
-        localStorage.setItem('highScore', highScore);
-        highScoreElement.textContent = highScore;
-    }
-    finalScoreElement.textContent = score;
-    finalHighScoreElement.textContent = highScore;
-    gameOverScreen.style.display = 'block';
-}
-
-function restartGame() {
-    gameActive = true;
-    currentColorIndex = 0;
-    score = 0;
-    cameraY = 0;
-    maxCameraY = 0;
-    gameSpeed = 2;
-    scoreElement.textContent = score;
+function changeGameState(newState) {
+    currentGameState = newState;
+    
+    // Hide all screens first
+    mainMenu.classList.add('hidden');
     gameOverScreen.style.display = 'none';
-
-    // Reset game objects with new spacing
-    ball = new Ball(canvas, ctx, colors, currentColorIndex);
-    ball.toggleCreativeMode(isCreativeMode);
-    obstacles = [new Obstacle(canvas, ctx, colors, canvas.height / 2)];
-    colorSwitchers = [new ColorSwitcher(canvas, ctx, colors, canvas.height / 2 - 200)];
-    stars = [new Star(canvas, ctx, canvas.height / 2)];
-
-    // Add a second set of objects with proper spacing
-    obstacles.push(new Obstacle(canvas, ctx, colors, canvas.height / 2 - 500));
-    colorSwitchers.push(new ColorSwitcher(canvas, ctx, colors, canvas.height / 2 - 700));
-    stars.push(new Star(canvas, ctx, canvas.height / 2 - 500));
-
-    gameLoop();
+    
+    // Show appropriate screen based on state
+    switch(newState) {
+        case GAME_STATE.MENU:
+            mainMenu.classList.remove('hidden');
+            // Update menu high score
+            menuHighScoreElement.textContent = highScore;
+            break;
+            
+        case GAME_STATE.PLAYING:
+            // Hide main menu
+            mainMenu.classList.add('hidden');
+            // Reset UI
+            gameOverScreen.style.display = 'none';
+            // Initialize game objects if needed
+            if (!gameActive) {
+                initializeGame();
+            }
+            // Start game loop
+            gameActive = true;
+            requestAnimationFrame(gameLoop);
+            break;
+            
+        case GAME_STATE.GAME_OVER:
+            if (score > highScore && !isCreativeMode) {
+                highScore = score;
+                localStorage.setItem('highScore', highScore);
+                highScoreElement.textContent = highScore;
+                menuHighScoreElement.textContent = highScore;
+            }
+            finalScoreElement.textContent = score;
+            finalHighScoreElement.textContent = highScore;
+            gameOverScreen.style.display = 'block';
+            gameActive = false;
+            break;
+    }
 }
 
 function toggleCreativeMode(e) {
-    isCreativeMode = e.target.checked;
-    ball.toggleCreativeMode(isCreativeMode);
+    isCreativeMode = typeof e === 'boolean' ? e : e.target.checked;
+    
+    if (ball) {
+        ball.toggleCreativeMode(isCreativeMode);
+    }
     
     // Update UI to reflect creative mode
     document.body.classList.toggle('creative-mode', isCreativeMode);
     
     // Create particle effects when toggling creative mode
-    if (isCreativeMode) {
-        effects.createColorfulExplosion(ball.x, ball.y, colors, 100);
-        effects.triggerScreenShake(10, 10);
-        document.querySelector('.game-container').classList.add('creative-mode');
-    } else {
-        document.querySelector('.game-container').classList.remove('creative-mode');
+    if (effects && ball) {
+        if (isCreativeMode) {
+            effects.createColorfulExplosion(ball.x, ball.y, colors, 100);
+            effects.triggerScreenShake(10, 10);
+            document.querySelector('.game-container').classList.add('creative-mode');
+        } else {
+            document.querySelector('.game-container').classList.remove('creative-mode');
+        }
     }
-}
-
-function createUI() {
-    // Create Creative Mode toggle
-    const uiControls = document.createElement('div');
-    uiControls.className = 'ui-controls';
     
-    const modeToggleContainer = document.createElement('div');
-    modeToggleContainer.className = 'mode-toggle';
-    
-    const modeToggleCheckbox = document.createElement('input');
-    modeToggleCheckbox.type = 'checkbox';
-    modeToggleCheckbox.id = 'creativeMode';
-    modeToggleCheckbox.addEventListener('change', toggleCreativeMode);
-    
-    const modeToggleLabel = document.createElement('label');
-    modeToggleLabel.htmlFor = 'creativeMode';
-    modeToggleLabel.textContent = 'Creative';
-    
-    modeToggleContainer.appendChild(modeToggleCheckbox);
-    modeToggleContainer.appendChild(modeToggleLabel);
-    uiControls.appendChild(modeToggleContainer);
-    
-    // Add the controls to the game container
-    document.querySelector('.game-container').appendChild(uiControls);
+    // Sync the creative mode toggle in the menu
+    if (creativeToggle) {
+        creativeToggle.checked = isCreativeMode;
+    }
 }
 
 // Event listeners
 document.addEventListener('keydown', (event) => {
     if (event.code === 'Space') {
-        ball.jump();
+        if (currentGameState === GAME_STATE.MENU) {
+            changeGameState(GAME_STATE.PLAYING);
+        } else if (currentGameState === GAME_STATE.PLAYING) {
+            ball.jump();
+        } else if (currentGameState === GAME_STATE.GAME_OVER) {
+            restartGame();
+        }
+        event.preventDefault();
+    }
+    
+    // ESC key to return to menu
+    if (event.code === 'Escape' && currentGameState === GAME_STATE.PLAYING) {
+        changeGameState(GAME_STATE.MENU);
         event.preventDefault();
     }
 });
 
 document.addEventListener('touchstart', (event) => {
-    ball.jump();
-    event.preventDefault();
+    if (currentGameState === GAME_STATE.PLAYING) {
+        ball.jump();
+        event.preventDefault();
+    }
+});
+
+// Menu button event listeners
+playButton.addEventListener('click', () => {
+    changeGameState(GAME_STATE.PLAYING);
 });
 
 restartButton.addEventListener('click', restartGame);
 
-// Start the game
-gameLoop();
+mainMenuButton.addEventListener('click', () => {
+    changeGameState(GAME_STATE.MENU);
+});
+
+// Creative mode toggle in settings
+creativeToggle.addEventListener('change', toggleCreativeMode);
+
+function restartGame() {
+    // Reset game state
+    gameActive = false;
+    // Initialize new game
+    initializeGame();
+    // Change state to playing
+    changeGameState(GAME_STATE.PLAYING);
+}
+
+// Initialize menu first
+changeGameState(GAME_STATE.MENU);
