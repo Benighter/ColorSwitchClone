@@ -75,6 +75,29 @@ class Background {
         
         this.ctx.restore();
     }
+
+    updateCanvasDimensions(canvas) {
+        // Update canvas reference
+        this.canvas = canvas;
+        
+        // Adjust stars to fit new canvas dimensions
+        this.stars.forEach(star => {
+            // Keep relative horizontal position
+            star.x = (star.x / this.canvas.width) * canvas.width;
+            
+            // Ensure stars are distributed throughout the visible area
+            if (star.y > canvas.height * 3) {
+                star.y = Math.random() * canvas.height * 3;
+            }
+        });
+        
+        // Add more stars if the canvas is significantly larger
+        const scaleFactor = (canvas.width * canvas.height) / (400 * 600);
+        if (scaleFactor > 1.5 && this.stars.length < 150) {
+            const additionalStars = Math.floor((scaleFactor - 1) * 50);
+            this.createStars(additionalStars);
+        }
+    }
 }
 
 export default Background; 

@@ -59,6 +59,7 @@ body.creative-mode {
     position: relative;
     width: 400px;
     height: 600px;
+    margin: 0 auto;
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
@@ -73,6 +74,8 @@ body.creative-mode {
 #gameCanvas {
     background: #000;
     display: block;
+    width: 100%;
+    height: 100%;
 }
 
 .ui-overlay {
@@ -81,7 +84,7 @@ body.creative-mode {
     left: 20px;
     color: white;
     font-family: 'Arial', sans-serif;
-    font-size: 20px;
+    font-size: calc(1vw + 1vh + 0.5vmin);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     z-index: 10;
 }
@@ -124,7 +127,7 @@ body.creative-mode {
     display: inline-block;
     padding-left: 45px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: calc(0.8vw + 0.8vh + 0.3vmin);
     color: white;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     transition: color 0.3s ease;
@@ -175,30 +178,32 @@ body.creative-mode {
     transform: translate(-50%, -50%);
     background: rgba(0, 0, 0, 0.9);
     color: white;
-    padding: 30px;
+    padding: 5%;
     border-radius: 15px;
     text-align: center;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
     z-index: 100;
     animation: fadeIn 0.3s ease-out;
+    width: 70%;
+    max-width: 500px;
 }
 
 .game-over h2 {
     margin-top: 0;
-    font-size: 36px;
+    font-size: calc(2vw + 2vh + 1vmin);
     color: #FF4136;
     text-shadow: 0 0 10px rgba(255, 65, 54, 0.5);
 }
 
 .game-over p {
-    font-size: 20px;
+    font-size: calc(1vw + 1vh + 0.5vmin);
     margin: 10px 0;
 }
 
 #restartButton {
     margin-top: 20px;
     padding: 12px 24px;
-    font-size: 18px;
+    font-size: calc(1vw + 1vh + 0.5vmin);
     background: linear-gradient(135deg, #4CAF50, #2E7D32);
     border: none;
     color: white;
@@ -239,4 +244,37 @@ body.creative-mode {
 
 .score-increased {
     animation: scoreIncrease 0.3s ease;
+}
+
+/* Media queries for responsive design */
+@media screen and (min-width: 768px) {
+    .game-container {
+        width: 400px;
+        height: 600px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .game-container {
+        width: 500px;
+        height: 750px;
+    }
+}
+
+@media screen and (min-width: 1600px) {
+    .game-container {
+        width: 600px;
+        height: 900px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .game-container {
+        width: 320px;
+        height: 480px;
+    }
+    
+    .ui-overlay {
+        font-size: calc(1.5vw + 1.5vh);
+    }
 }

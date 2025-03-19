@@ -122,6 +122,25 @@ class Star {
         }
         return false;
     }
+
+    updateCanvasDimensions(canvas) {
+        // Save the relative position before updating canvas
+        const relativeY = this.y / this.canvas.height;
+        
+        // Update canvas reference
+        this.canvas = canvas;
+        
+        // Update position
+        this.x = canvas.width / 2;
+        this.y = relativeY * canvas.height;
+        
+        // Scale radius based on canvas size
+        const scaleFactor = Math.min(canvas.width, canvas.height) / 600;
+        this.radius = 10 * scaleFactor;
+        
+        // Recalculate star points with new radius
+        this.calculateStarPoints();
+    }
 }
 
 export default Star;

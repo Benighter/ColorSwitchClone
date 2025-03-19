@@ -29,6 +29,34 @@ const restartButton = document.getElementById('restartButton');
 canvas.width = 400;
 canvas.height = 600;
 
+// Add resize event listener
+window.addEventListener('resize', resizeCanvas);
+
+// Function to resize canvas
+function resizeCanvas() {
+    const container = canvas.parentElement;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    
+    // Make sure we have valid dimensions
+    if (containerWidth > 0 && containerHeight > 0) {
+        canvas.width = containerWidth;
+        canvas.height = containerHeight;
+        
+        // Update objects that depend on canvas dimensions
+        if (ball) ball.updateCanvasDimensions(canvas);
+        if (obstacles) obstacles.forEach(obstacle => obstacle.updateCanvasDimensions(canvas));
+        if (colorSwitchers) colorSwitchers.forEach(switcher => switcher.updateCanvasDimensions(canvas));
+        if (stars) stars.forEach(star => star.updateCanvasDimensions(canvas));
+        if (background) background.updateCanvasDimensions(canvas);
+        if (effects) effects.updateCanvasDimensions(canvas);
+    }
+}
+
+// Call resize once to set initial dimensions
+// Delay the initial resize slightly to ensure the DOM is fully loaded
+setTimeout(resizeCanvas, 100);
+
 // Display high score on page load
 highScoreElement.textContent = highScore;
 

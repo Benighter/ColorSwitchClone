@@ -46,6 +46,26 @@ class Particle {
         this.ctx.fill();
         this.ctx.restore();
     }
+
+    updateCanvasDimensions(canvas) {
+        // Save relative position
+        const relativeX = this.x / this.canvas.width;
+        const relativeY = this.y / this.canvas.height;
+        
+        // Update canvas reference
+        this.canvas = canvas;
+        
+        // Update position
+        this.x = relativeX * canvas.width;
+        this.y = relativeY * canvas.height;
+        
+        // Scale radius and velocities based on canvas size
+        const scaleFactor = Math.min(canvas.width, canvas.height) / 600;
+        this.originalRadius = this.originalRadius * scaleFactor;
+        this.radius = this.radius * scaleFactor;
+        this.velocityX = this.velocityX * scaleFactor;
+        this.velocityY = this.velocityY * scaleFactor;
+    }
 }
 
 export default Particle; 

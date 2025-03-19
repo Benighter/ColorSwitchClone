@@ -124,6 +124,24 @@ class Effects {
         this.createColorfulExplosion(x, y, colors, 40);
         this.triggerScreenShake(5, 5);
     }
+
+    updateCanvasDimensions(canvas) {
+        // Update canvas reference
+        this.canvas = canvas;
+        
+        // Scale effects based on canvas size
+        const scaleFactor = Math.min(canvas.width, canvas.height) / 600;
+        
+        // Update existing particles if any
+        this.particles.forEach(particle => {
+            if (particle.updateCanvasDimensions) {
+                particle.updateCanvasDimensions(canvas);
+            }
+        });
+        
+        // Adjust shake intensity based on canvas size
+        this.shakeIntensity = this.shakeIntensity * scaleFactor;
+    }
 }
 
 export default Effects; 

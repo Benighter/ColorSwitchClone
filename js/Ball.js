@@ -139,6 +139,29 @@ class Ball {
             this.trailOpacity = 0.6;
         }
     }
+
+    updateCanvasDimensions(canvas) {
+        // Save the relative position before updating canvas
+        const relativeY = this.y / this.canvas.height;
+        
+        // Update canvas reference
+        this.canvas = canvas;
+        
+        // Recalculate position based on new dimensions
+        this.x = canvas.width / 2;
+        
+        // Make sure the ball stays visible
+        if (relativeY < 0 || relativeY > 1) {
+            // Reset to default position if outside valid range
+            this.y = canvas.height - this.radius - 10;
+        } else {
+            this.y = relativeY * canvas.height;
+        }
+        
+        // Adjust radius based on canvas size (optional)
+        const scaleFactor = Math.min(canvas.width, canvas.height) / 600;
+        this.radius = 15 * scaleFactor;
+    }
 }
 
 export default Ball;
