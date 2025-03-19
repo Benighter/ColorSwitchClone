@@ -78,7 +78,7 @@ This version enhances the original concept with:
 ### Setup
 1. Clone the repository:
    ```
-   git clone https://github.com/benighter/color-switch-clone.git
+   git clone https://github.com/Benighter/ColorSwitchClone.git
    cd color-switch-clone
    ```
 
