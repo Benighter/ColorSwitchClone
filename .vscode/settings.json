@@ -1,3 +1,4 @@
 {
-    "CodeGPT.apiKey": "Github"
+    "CodeGPT.apiKey": "Github",
+    "liveServer.settings.port": 5501
 }
