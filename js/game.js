@@ -236,7 +236,7 @@ function initializeGame() {
     // Create initial obstacles based on current level
     obstacles = [levelManager.generateObstacle(canvas, ctx, colors, canvas.height / 2, Obstacle)];
     colorSwitchers = [new ColorSwitcher(canvas, ctx, colors, canvas.height / 2 - 200)];
-    stars = [new Star(canvas, ctx, canvas.height / 2 - 100)];
+    stars = [new Star(canvas, ctx, canvas.height / 2)];
     
     // Apply creative mode if enabled
     if (isCreativeMode) {
@@ -246,9 +246,10 @@ function initializeGame() {
     }
     
     // Add a second set of objects with proper spacing
-    obstacles.push(levelManager.generateObstacle(canvas, ctx, colors, canvas.height / 2 - 500, Obstacle));
-    colorSwitchers.push(new ColorSwitcher(canvas, ctx, colors, canvas.height / 2 - 700));
-    stars.push(new Star(canvas, ctx, canvas.height / 2 - 400));
+    const secondObstacleY = canvas.height / 2 - 500;
+    obstacles.push(levelManager.generateObstacle(canvas, ctx, colors, secondObstacleY, Obstacle));
+    colorSwitchers.push(new ColorSwitcher(canvas, ctx, colors, secondObstacleY - 200));
+    stars.push(new Star(canvas, ctx, secondObstacleY));
     
     // Add a powerup
     if (levelManager.shouldSpawnPowerup()) {
@@ -421,7 +422,7 @@ function gameLoop() {
             
             // Add star with level-specific probability
             if (levelManager.shouldSpawnStar()) {
-                stars.push(new Star(canvas, ctx, newY - 100));
+                stars.push(new Star(canvas, ctx, newY));
             }
             
             // Add powerup with level-specific probability
