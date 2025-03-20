@@ -56,8 +56,8 @@ const creativeToggle = document.getElementById('creativeMode');
 const levelManager = new LevelManager();
 
 // Set canvas dimensions
-canvas.width = 400;
-canvas.height = 600;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
 // Add resize event listener
 window.addEventListener('resize', resizeCanvas);
@@ -65,8 +65,8 @@ window.addEventListener('resize', resizeCanvas);
 // Function to resize canvas
 function resizeCanvas() {
     const container = canvas.parentElement;
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
+    const containerWidth = window.innerWidth;
+    const containerHeight = window.innerHeight;
     
     // Make sure we have valid dimensions
     if (containerWidth > 0 && containerHeight > 0) {
