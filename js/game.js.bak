@@ -538,8 +538,19 @@ function applyMagnetEffect() {
 
 // Helper function to get a safe horizontal position within player's reach
 function getSafeHorizontalPosition(canvas) {
-    // Always return the exact center position
-    return canvas.width / 2;
+    // First option: 10% of screen width from center (was 15%)
+    const safeRangePercentage = 0.1; 
+    const maxOffset = canvas.width * safeRangePercentage;
+    
+    // 80% chance to spawn directly in center column to ensure most powerups are easily reachable
+    if (Math.random() < 0.8) {
+        // Very small random offset to avoid exact center every time
+        return canvas.width / 2 + (Math.random() - 0.5) * 20;
+    }
+    
+    // 20% chance to use the safe range
+    const offsetX = (Math.random() - 0.5) * maxOffset;
+    return canvas.width / 2 + offsetX;
 }
 
 function changeGameState(newState) {

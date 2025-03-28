@@ -202,57 +202,167 @@ body.creative-mode {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.9);
+    background: linear-gradient(135deg, rgba(25, 0, 51, 0.95), rgba(10, 10, 20, 0.9));
     color: white;
-    padding: 5%;
-    border-radius: 15px;
+    padding: 40px;
+    border-radius: 20px;
     text-align: center;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 40px rgba(156, 89, 255, 0.4), 0 0 100px rgba(0, 0, 0, 0.7);
     z-index: 100;
-    animation: fadeIn 0.3s ease-out;
+    animation: gameOverEnter 0.5s cubic-bezier(0.17, 0.67, 0.32, 1.34);
     width: 70%;
     max-width: 500px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.game-over::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(156, 89, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    animation: shimmer 4s infinite linear;
+    z-index: -1;
 }
 
 .game-over h2 {
     margin-top: 0;
+    margin-bottom: 30px;
     font-size: calc(2vw + 2vh + 1vmin);
-    color: #FF4136;
-    text-shadow: 0 0 10px rgba(255, 65, 54, 0.5);
+    color: #fff;
+    text-shadow: 0 0 20px rgba(156, 89, 255, 0.8);
+    font-weight: 700;
+    letter-spacing: 2px;
+    position: relative;
+    display: inline-block;
+}
+
+.game-over h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #FF4136, transparent);
+    transform: translateX(-50%);
+    border-radius: 3px;
+    animation: pulse 2s infinite;
 }
 
 .game-over p {
-    font-size: calc(1vw + 1vh + 0.5vmin);
-    margin: 10px 0;
+    font-size: calc(1.1vw + 1.1vh + 0.5vmin);
+    margin: 20px 0;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-weight: 300;
 }
 
-#restartButton {
-    margin-top: 20px;
-    padding: 12px 24px;
-    font-size: calc(1vw + 1vh + 0.5vmin);
-    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+.game-over p span {
+    color: #FFDC00;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(255, 220, 0, 0.5);
+    animation: scorePulse 2s infinite;
+}
+
+@keyframes gameOverEnter {
+    0% { opacity: 0; transform: translate(-50%, -60%) scale(0.9); }
+    70% { opacity: 1; transform: translate(-50%, -48%) scale(1.03); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+@keyframes scorePulse {
+    0% { text-shadow: 0 0 10px rgba(255, 220, 0, 0.5); }
+    50% { text-shadow: 0 0 20px rgba(255, 220, 0, 0.8); }
+    100% { text-shadow: 0 0 10px rgba(255, 220, 0, 0.5); }
+}
+
+.game-over-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 30px;
+    gap: 15px;
+}
+
+#restartButton, #mainMenuButton {
+    width: 70%;
+    padding: 15px 0;
+    font-size: calc(0.9vw + 0.9vh + 0.3vmin);
     border: none;
-    color: white;
     border-radius: 30px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
 }
 
-#restartButton:hover {
-    background: linear-gradient(135deg, #45a049, #296e2b);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+#restartButton {
+    background: linear-gradient(135deg, #FF4136, #9c59ff);
+    color: white;
+    box-shadow: 0 4px 15px rgba(156, 89, 255, 0.4);
 }
 
-#restartButton:active {
+#mainMenuButton {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+#restartButton:hover, #mainMenuButton:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(156, 89, 255, 0.5);
+}
+
+#restartButton:active, #mainMenuButton:active {
     transform: translateY(1px);
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+#restartButton::after, #mainMenuButton::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    z-index: -1;
+}
+
+#restartButton:hover::after, #mainMenuButton:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.game-over .control-hint {
+    margin-top: 25px;
+    font-size: calc(0.7vw + 0.7vh + 0.2vmin);
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+    animation: pulse 2s infinite ease-in-out;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translate(-50%, -60%); }
-    to { opacity: 1; transform: translate(-50%, -50%); }
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 0.8; transform: translateY(0); }
 }
 
 @keyframes pulse {
@@ -544,6 +654,14 @@ input:checked + .toggle-switch:after {
     margin: 5px 0;
 }
 
+.menu-footer .control-hint {
+    font-size: calc(0.6vw + 0.6vh + 0.2vmin);
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 10px;
+    font-style: italic;
+    animation: pulse 2s infinite ease-in-out;
+}
+
 /* Game over screen updates */
 .game-over-buttons {
     display: flex;
@@ -823,6 +941,37 @@ input:checked + .toggle-switch:after {
 }
 
 @keyframes rotateStar {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.game-over-decoration {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    opacity: 0.15;
+    z-index: -1;
+}
+
+.game-over-decoration.left {
+    top: 20px;
+    left: 20px;
+    border-top: 4px solid #FF4136;
+    border-left: 4px solid #FF4136;
+    border-top-left-radius: 20px;
+    animation: rotateDecoration 8s linear infinite;
+}
+
+.game-over-decoration.right {
+    bottom: 20px;
+    right: 20px;
+    border-bottom: 4px solid #9c59ff;
+    border-right: 4px solid #9c59ff;
+    border-bottom-right-radius: 20px;
+    animation: rotateDecoration 8s linear infinite reverse;
+}
+
+@keyframes rotateDecoration {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
